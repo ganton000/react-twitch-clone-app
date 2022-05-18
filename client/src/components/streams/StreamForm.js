@@ -1,9 +1,9 @@
 import React from "react";
-import { Field, reduxForm } from 'redux-form';
+import { Form, Field} from 'react-final-form';
 
-class StreamForm extends React.Component {
+const StreamForm = props => {
 
-	renderError({ error, touched }) {
+	const renderError = ({ error, touched }) => {
 		if (touched && error) {
 			return (
 				<div
@@ -17,7 +17,7 @@ class StreamForm extends React.Component {
 	};
 
 	//destructured formProps for input
-	renderInput = ({ input, label, meta }) => {
+	const renderInput = ({ input, label, meta }) => {
 
 		const className = `field ${meta.error && meta.touched ? 'error': ''}`
 
@@ -27,40 +27,17 @@ class StreamForm extends React.Component {
 				{label}
 			</label>
 			<input {...input} autoComplete="off" />
-			{this.renderError(meta)}
+			{renderError(meta)}
 		</div>
 		)
-	}
+	};
 
-	onSubmit = formValues => {
-		this.props.onSubmit(formValues)
-	}
+	const onSubmit = formValues => {
+		props.onSubmit(formValues)
+	};
 
-	render() {
-		return (
-		<form
-		onSubmit={this.props.handleSubmit(this.onSubmit)}
-		className="ui form error">
-			<Field
-			label="Enter Title"
-			name="title"
-			component={this.renderInput}
-			/>
-			<Field
-			label="Enter Description"
-			name="description"
-			component={this.renderInput}
-			/>
-			<button
-			className="ui button primary">
-				Submit
-			</button>
-		</form>
-	)};
-};
-
-//will validate inputs via this.props.handleSubmit
-const validate = (formValues) => {
+	//will validate inputs
+	const validate = (formValues) => {
 	const errors = {};
 
 	if (!formValues.title) {
@@ -74,7 +51,34 @@ const validate = (formValues) => {
 	return errors;
 };
 
-export default reduxForm({
-	form: 'streamForm',
-	validate
-})(StreamForm);
+
+	return (
+		<Form
+		initialValues={props.initialValues}
+		onSubmit={onSubmit}
+		validate={validate}
+		render={({ handleSubmit }) => (
+		<form
+		onSubmit={handleSubmit}
+		className="ui form error">
+			<Field
+			label="Enter Title"
+			name="title"
+			component={renderInput}
+			/>
+			<Field
+			label="Enter Description"
+			name="description"
+			component={renderInput}
+			/>
+			<button
+			className="ui button primary">
+				Submit
+			</button>
+		</form>
+		)}
+		/>
+	);
+};
+
+export default StreamForm;
